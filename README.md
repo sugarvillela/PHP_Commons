@@ -7,4 +7,4 @@ to use up space.
 
 ## Commons
 * Functions for format, display etc.
-* TMath: functions for time
+* TMath Class: static functions for time
