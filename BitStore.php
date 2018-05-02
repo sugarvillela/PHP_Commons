@@ -1,3 +1,4 @@
+<?php
 class bitStore {
     /* Handy class if you have a bunch of boolean flags to set and you don't want
      * to use up space.  Each element of the integer array can store 32 boolean
