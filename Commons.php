@@ -245,6 +245,112 @@ class TMath{
         );
     }
 }
+class QStack{
+    /* Iterable array with functions:
+     * can be a stack, a queue or a self iterator
+     */
+    protected $iArr, $iCount, $limit;
+    function __construct( $setArr=null ) {
+        $this->itrInit( $setArr );
+        $this->limit=999;
+    }
+    function itrInit( $setArr=null ){
+        $this->iArr=( $setArr )? $setArr : array();
+        $this->itrReset();
+    }
+    function itrReset( $setTo=false ){
+        $this->iCount=( $setTo!==false )? $setTo : -1;
+        //echo "iCount=$this->iCount<br>";
+    }
+    function getCounter(){ return $this->iCount; }
+    function itrSetLimit( $setLimit ){
+        $this->limit=$setLimit;
+    }
+    function initFromString( $str ){
+        $len=strlen( $str );
+        for ($i = 0; $i < $len; $i++) {
+            $this->iArr[]=$str[$i];
+        }
+    }
+    function more(){//for terminating iterator
+        return ( $this->iCount < $this->len() && $this->iCount < $this->limit );
+    }
+    function inc(){//iterator
+        $this->iCount++;
+    }
+    function dec(){//iterator
+        $this->iCount--;
+    }
+    function getCurr(){
+        return $this->iArr[ $this->iCount ];
+    }
+    function getNext( &$returnMe ){
+        /* One function does it all */
+        $this->iCount++;
+        if( $this->more() ){
+            $returnMe=$this->iArr[ $this->iCount ];
+            return true;
+        }
+        return false;
+    }
+    function getPrev( &$returnMe ){
+        /* One function does it all */
+        $this->iCount--;
+        if( $this->iCount >= 0 ){
+            $returnMe=$this->iArr[ $this->iCount ];
+            return true;
+        }
+        return false;
+    }
+    function push( $pushMe ){//queue or stack-like behavior: peek
+        $this->iArr[]=$pushMe;
+    }
+    function top( &$returnMe ){//stack-like behavior: peek
+        $count=$this->len();
+        if( $count ){
+            $returnMe=$this->iArr[ $count-1 ];
+            return true;
+        }
+        return false;
+    }
+    function pop( &$returnMe ){
+        $top=array_pop( $this->iArr );
+        if( $top ){
+            $returnMe=$top;
+            return true;
+        }
+        return false;
+    }
+    function bottom( &$returnMe ){//queue-like behavior: peek
+        $count=$this->len();
+        if( $count ){
+            $returnMe=$this->iArr[ 0 ];
+            return true;
+        }
+        return false;
+    }
+    function dequeue( &$returnMe ){
+        $top=array_shift( $this->iArr );
+        if( $top ){
+            $returnMe=$top;
+            return true;
+        }
+        return false;
+    }
+    function at( $i ){//vector-like behavior
+        return $this->iArr[$i];
+    }
+    function itrUnset( $i ){
+        unset( $this->iArr[$i] );
+    }
+    function itrGetKey( $value ){
+        return array_search ( $value , $this->iArr );
+    }
+    function len(){
+        return count( $this->iArr );
+    }
+    function getIArr(){ return $this->iArr; }
+}
 /* Display functions */
 function disp( $array, $label='Display:<br>' ){
     foreach(  $array as $key => $value ){
