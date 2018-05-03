@@ -14,3 +14,4 @@ to use up space.
 ## Commons
 * Functions for format, display etc.
 * TMath Class: static functions for time
+* QStack Class: stack, queue, iterator
