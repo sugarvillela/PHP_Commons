@@ -65,7 +65,7 @@ class flag_object_example extends flag_object {
         return $integer;
     }
 }
-abstract class flag_object {//extends QStack
+abstract class flag_object {
     public $flags;
     /* The flag container should be a two-dimensional array. One dimension we call
      * the row and the second we call the column. Implementing class names the rows
