@@ -26,6 +26,11 @@
  */
 function flag_object_test(){
     $f = new flag_object_example('Hello');
+    $f->set( 'attribute', 'cap' );//first call formats attribute and sets cap true
+    echo $f->tru( 'attribute', 'cap' ).'<br>';//Prints 1 because cap is set
+    echo $f->tru( 'attribute', 'numeric' ).'<br>';//false because numeric is not set
+    echo $f->tru( 'type', 'unicorn' ).'<br>';//false because type is not set
+    echo $f->doSomething( 6 ).'<br>';//Prints 6 because that's something
 }
 class flag_object_example extends flag_object {
     function __construct( $setText ) {
@@ -37,6 +42,7 @@ class flag_object_example extends flag_object {
         $this->flags=array(
             "text"=>null,
             "attribute"=>null,
+            "type"=>null,
         );
     }
     function format_text(){
