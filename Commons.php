@@ -1,4 +1,65 @@
 <?php
+/* Database functions */
+/* The functions below assume you have opened a mysqli database connection and
+ * given it a global handle named $dbc.  You also have set a global variable
+ * $dbName with the name of the schema
+ */
+function getColNames( $table ){
+    global $dbc; global $dbName;
+    $query="SELECT * FROM `$dbName`.`$table` LIMIT 1;";
+    $result = mysqli_query( $dbc, $query );
+    if ($result AND $row = mysqli_fetch_assoc( $result ) ) {
+        $out=array();
+        foreach ( $row as $key => $value ){
+            $out[]=$key;
+        }
+        mysqli_free_result($result);
+        return $out;
+    }
+    echo 'getColNames(), error: ' . mysqli_error( $dbc );
+    return array();
+}
+function getTableNames(){
+    global $dbc; global $dbName;
+    $result = mysqli_query( $dbc, "SHOW TABLES FROM `$dbName`;" );
+    if ($result) {
+        $out=array();
+        while( ( $row = mysqli_fetch_row( $result ) ) ){
+            $out[]=$row[0];
+        }
+        mysqli_free_result($result);
+        return $out;
+    }
+    echo 'getTableNames(), error: ' . mysqli_error( $dbc );
+    return array();
+}
+function dbToFile_json( $directory='' ){
+    /* Backs up all tables in the schema in JSON format.
+     * Generates file names based on table name. If you want the file in a
+     * directory, pass the path, including the slash.  Example:
+     * dbToFile_json('db_backup/');
+     */
+    global $dbc; global $dbName;
+    $row; $fout; 
+    $tables=getTableNames();
+    disp( $tables, 'List of Tables:' );
+    foreach ( $tables as $table ) {
+        $query="SELECT * FROM `$dbName`.`$table` ORDER BY `text`;";
+//        echo "$query<br>";
+//        echo "$directory$table.txt<br>";
+        $result = mysqli_query( $dbc, $query );
+        if ( $result AND ( $fout=fopen( "$directory$table.txt", 'w' ) ) ) {
+            $linesWritten=0;
+            while( ( $row = mysqli_fetch_assoc( $result ) ) ){
+                fwrite( $fout, json_encode( $row ).PHP_EOL );
+                $linesWritten++;
+            }
+            echo "Wrote $linesWritten lines to $directory$table.txt<br>";
+            mysqli_free_result( $result );
+            fclose( $fout );
+        }
+    }
+}
 /* Array functions */
 function initArrayToRange( $lo, $hi ){
     $out=array();
@@ -117,6 +178,15 @@ class TMath{
             "-".numPad( $m ).
             "-".numPad( $d ).
             " 00:00:00";
+    }
+    static function fromDateString( $dateString ){
+        $mm=substr( $dateString, 5, 2 )-0;
+        return array(
+            "yyyy"=>substr( $dateString, 0, 4 )-0,
+            "mm"=>$mm,
+            "dd"=>substr( $dateString, 8, 2 )-0,
+            "mName"=>TMath::monthName($mm)
+        );
     }
     static function dateStringToRead( $str ){
         return substr( $str, 5, 2 ).'/'.substr( $str, 8, 2 ).'/'.substr( $str, 0, 4 );
