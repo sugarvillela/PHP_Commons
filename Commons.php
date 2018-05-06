@@ -122,23 +122,6 @@ function telToReadable( $n ){
             return $n;//return empty or false to assert length 7 or 10
     }
 }
-function dateStringToArray( $dateString ){
-    /* Example input and call:
-        $s='2018-01-13 00:00:00';
-        var_dump( dateStringToArray( $s ) );
-     * Output:
-        array(4) { ["yyyy"]=> int(2018) ["mm"]=> int(1) ["dd"]=> int(13) ["mName"]=> string(7) "January" }
-     */
-    $mm=substr( $dateString, 5, 2 )-0;
-    $ms=array( "","January", "February", "March", "April", "May", "June", 
-        "July", "August", "September", "October", "November", "December" );
-    return array(
-        "yyyy"=>substr( $dateString, 0, 4 )-0,
-        "mm"=>$mm,
-        "dd"=>substr( $dateString, 8, 2 )-0,
-        "mName"=>$ms[$mm]
-    );
-}
 /* TMath for math with time: use time as minutes */
 function numPad( $padMe, $n=2 ){//returned string length >= n
     /* pretty wrapper for ugly formatting */
@@ -179,7 +162,7 @@ class TMath{
             "-".numPad( $d ).
             " 00:00:00";
     }
-    static function fromDateString( $dateString ){
+    static function dateStringToArray( $dateString ){
         $mm=substr( $dateString, 5, 2 )-0;
         return array(
             "yyyy"=>substr( $dateString, 0, 4 )-0,
@@ -351,6 +334,49 @@ class QStack{
     }
     function getIArr(){ return $this->iArr; }
 }
+class OBJ_SHOP{//
+    /* Example code: you have objects that are going to be instantiated over
+     * and over.  Just reuse: first call instantiates; next call shares.
+     * --Only for objects that have no class-wide state, like encapsulated
+     *   algorithms (strategies)
+     * --Does this save resources? Hmm...
+     * --Define a nop class that does nothing
+     * --Give each class the same interface
+     */
+    static function init() {
+        echo "OBJ_SHOP init<br>";
+        $GLOBALS['OBJ_SHOP']=array(//inventory: each is null until used once
+            'obj_1'=>null,
+            'obj_2'=>null,
+            'obj_3'=>null,
+            'obj_4'=>null,
+        );
+    }
+    static function get( $obj_name ){
+        /* changes text run commands into their respective run objects */
+        if( $GLOBALS['OBJ_SHOP'][$obj_name] ){
+            return $GLOBALS['OBJ_SHOP'][$obj_name];
+        }
+        switch ( $obj_name ){
+            case 'obj_1':
+                $GLOBALS['OBJ_SHOP'][$obj_name]=new obj_1();
+                break;
+            case 'obj_2':
+                $GLOBALS['OBJ_SHOP'][$obj_name]=new obj_2();
+                break;
+            case 'obj_3':
+                $GLOBALS['OBJ_SHOP'][$obj_name]=new obj_3();
+                break;
+            case 'obj_4':
+                $GLOBALS['OBJ_SHOP'][$obj_name]=new obj_4();
+                break;
+            default:
+                return new nop();
+        }
+        return $GLOBALS['OBJ_SHOP'][$obj_name];
+    }
+}
+OBJ_SHOP::init();
 /* Display functions */
 function disp( $array, $label='Display:<br>' ){
     foreach(  $array as $key => $value ){
