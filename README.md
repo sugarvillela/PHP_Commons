@@ -14,3 +14,4 @@ to use up space.
 * Functions for format, display etc.
 * TMath Class: static functions for time
 * QStack Class: stack, queue, iterator
+* Object Shop: static class for obtaining reusable objects
