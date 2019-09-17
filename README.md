@@ -10,6 +10,9 @@ to use up space.
 ## QGen Class with test function
 * Generates mySQL queries from associative array parameters.
 
+## Counting Set
+* Behaves like a set (items only occur once), but also keeps count of how many times each item was added. 
+
 ## Commons
 * Functions for format, display etc.
 * TMath Class: static functions for time
